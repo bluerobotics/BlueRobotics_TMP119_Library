@@ -28,3 +28,15 @@ jobs:
         pip install --upgrade platformio
     - name: Run PlatformIO
       run: platformio ci --lib="." --board=uno --board=megaatmega2560 examples/TMP119_Example/*.ino
+
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Arduino Lint
+      uses: arduino/arduino-lint-action@v2
+      with:
+        project-type: library
+        compliance: strict
+        library-manager: submit

@@ -5,12 +5,10 @@ Title: Blue Robotics Arduino TMP119 Temperature Sensor Library
 Description: This library provides utilities to communicate with and to
 read data from the Texas Instruments TMP119 high-accuracy temperature
 sensor.
-Authors: Rustom Jehangir, Blue Robotics Inc.
-		 Jonathan Newman, Blue Robotics Inc.
-         Adam Šimko, Blue Robotics Inc.
+Authors: Zachariah Mears, Blue Robotics Inc.
 -------------------------------
 The MIT License (MIT)
-Copyright (c) 2016 Blue Robotics Inc.
+Copyright (c) 2026 Blue Robotics Inc.
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights

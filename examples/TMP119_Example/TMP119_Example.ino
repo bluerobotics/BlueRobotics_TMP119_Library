@@ -11,9 +11,6 @@ between conversions. After init(), the sensor is set to its fastest update
 rate; here we override that with heavy averaging and a 1 second cycle for
 low-noise readings.
 
-The code is designed for the Arduino Uno board and can be compiled and 
-uploaded via the Arduino 1.0+ software.
-
 -------------------------------
 The MIT License (MIT)
 
@@ -46,13 +43,13 @@ THE SOFTWARE.
 //             0x48 (GND), 0x49 (V+), 0x4A (SDA), 0x4B (SCL)
 //   wire    - I2C bus to use (default &Wire)
 // e.g. "TMP119 sensor;" is equivalent to "TMP119 sensor(0x48, &Wire);"
-TMP119 sensor(0x48, &Wire1);
+TMP119 sensor;
 
 void setup() {
     Serial.begin(9600);
     Serial.println("Starting");
 
-    Wire1.begin();
+    Wire.begin();
 
     while (!sensor.init()) {
         Serial.println("TMP119 device failed to initialize!");
@@ -63,10 +60,7 @@ void setup() {
     // average 64 conversions and update roughly once per second.
     //
     // Averaging options (setAveraging):
-    //   TMP119_AVERAGE_1X    - no averaging (lowest noise rejection)
-    //   TMP119_AVERAGE_8X    - 8 averaged conversions
-    //   TMP119_AVERAGE_32X   - 32 averaged conversions
-    //   TMP119_AVERAGE_64X   - 64 averaged conversions (lowest noise)
+    //   TMP119_AVERAGE_1X, TMP119_AVERAGE_8X, TMP119_AVERAGE_32X, TMP119_AVERAGE_64X
     //
     // Standby delay options (setReadDelay):
     //   TMP119_DELAY_0_MS, TMP119_DELAY_125_MS, TMP119_DELAY_250_MS,
@@ -74,8 +68,8 @@ void setup() {
     //   TMP119_DELAY_8000_MS, TMP119_DELAY_16000_MS
     // (the resulting conversion cycle time depends on both settings,
     //  see datasheet Table 8-6)
-    //sensor.setAveraging(TMP119_AVERAGE_64X);
-    //sensor.setReadDelay(TMP119_DELAY_1000_MS);
+    sensor.setAveraging(TMP119_AVERAGE_64X);
+    sensor.setReadDelay(TMP119_DELAY_1000_MS);
 }
 
 void loop() {
@@ -83,5 +77,5 @@ void loop() {
     Serial.print("Temperature: ");
     Serial.print(sensor.temperature());
     Serial.println(" deg C");
-    //delay(1000);
+    delay(1000);
 }

@@ -33,7 +33,8 @@ bool TMP119::init() {
 	// Configure for the fastest update rate: no averaging and the shortest
 	// standby delay, giving a ~15.5 ms conversion cycle (datasheet Table 8-6)
 	uint16_t config = getConfig();
-	config &= ~(TMP119_AVG_MASK | TMP119_CONV_MASK); // AVG = 1X, delay = 0 ms
+	// Cute trick to set all the values to zero to acheive AVG = 1X, delay = 0 ms
+	config &= ~(TMP119_AVG_MASK | TMP119_CONV_MASK);
 	return setConfig(config);
 }
 

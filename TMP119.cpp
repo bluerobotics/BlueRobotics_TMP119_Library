@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 Blue Robotics Inc.
+
 #include "TMP119.h"
 
 #define TMP119_TEMP_REG                    0x00
@@ -30,10 +33,10 @@ bool TMP119::init() {
 		return false;
 	}
 
-	// Configure for the fastest update rate: no averaging and the shortest
-	// standby delay, giving a ~15.5 ms conversion cycle (datasheet Table 8-6)
+	// Configure for the fastest update rate: no averaging and no added standby
+	// delay, giving a ~15.5 ms conversion cycle (datasheet Table 8-6)
 	uint16_t config = getConfig();
-	// Cute trick to set all the values to zero to acheive AVG = 1X, delay = 0 ms
+	// Cute trick to set all the values to zero to acheive AVG = 1X, delay = none
 	config &= ~(TMP119_AVG_MASK | TMP119_CONV_MASK);
 	return setConfig(config);
 }

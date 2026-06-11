@@ -1,30 +1,13 @@
 /* Blue Robotics Arduino TMP119 Temperature Sensor Library
-------------------------------------------------------------
- 
-Title: Blue Robotics Arduino TMP119 Temperature Sensor Library
-Description: This library provides utilities to communicate with and to
-read data from the Texas Instruments TMP119 high-accuracy temperature
-sensor.
-Authors: Zachariah Mears, Blue Robotics Inc.
--------------------------------
-The MIT License (MIT)
-Copyright (c) 2026 Blue Robotics Inc.
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
--------------------------------*/ 
+ *
+ * This library provides utilities to communicate with and read data from the
+ * Texas Instruments TMP119 high-accuracy temperature sensor.
+ *
+ * Author: Zachariah Mears, Blue Robotics Inc.
+ *
+ * SPDX-License-Identifier: MIT
+ * Copyright (c) 2026 Blue Robotics Inc.
+ */
 
 #ifndef TMP119_H_BLUEROBOTICS
 #define TMP119_H_BLUEROBOTICS
@@ -34,23 +17,31 @@ THE SOFTWARE.
 
 /** Conversion averaging mode (AVG[1:0], configuration register bits 6:5).
  *  Determines how many conversions are accumulated and averaged before the
- *  temperature register updates. More averaging reduces noise but lengthens
- *  the conversion cycle. Power-on default: TMP119_AVERAGE_8X.
+ *  temperature register updates. More averaging reduces noise but takes longer
+ *  to produce each result. The time to compute one averaged result is the
+ *  per-mode minimum conversion time shown below (datasheet Table 8-6).
+ *  Power-on default: TMP119_AVERAGE_8X.
  */
 typedef enum {
-	TMP119_AVERAGE_1X,  // No averaging
-	TMP119_AVERAGE_8X,  // 8 averaged conversions (power-on default)
-	TMP119_AVERAGE_32X, // 32 averaged conversions
-	TMP119_AVERAGE_64X, // 64 averaged conversions
+	TMP119_AVERAGE_1X,  // No averaging   (min conversion time 15.5 ms)
+	TMP119_AVERAGE_8X,  // 8 conversions  (min conversion time 125 ms, default)
+	TMP119_AVERAGE_32X, // 32 conversions (min conversion time 500 ms)
+	TMP119_AVERAGE_64X, // 64 conversions (min conversion time 1 s)
 } tmp119_average_count_t;
 
-/** Minimum standby delay between conversions in continuous-conversion mode
- *  (CONV[2:0], configuration register bits 9:7). This sets the standby time;
- *  the total conversion cycle time also depends on the averaging setting (see
- *  datasheet Table 8-6). Power-on default: TMP119_DELAY_1000_MS.
+/** Minimum standby delay inserted between conversions in continuous-conversion
+ *  mode (CONV[2:0], configuration register bits 9:7).
+ *
+ *  This is not the actual time between readings on its own. The actual
+ *  conversion cycle time is the greater of this standby delay and the time
+ *  needed by the selected averaging mode (see tmp119_average_count_t). For
+ *  example, TMP119_DELAY_NONE with TMP119_AVERAGE_64X still produces a ~1 s
+ *  cycle because the 64x average alone takes 1 s. See datasheet Table 8-6.
+ *
+ *  Power-on default: TMP119_DELAY_1000_MS.
  */
 typedef enum {
-	TMP119_DELAY_0_MS,
+	TMP119_DELAY_NONE,    // no added standby delay
 	TMP119_DELAY_125_MS,
 	TMP119_DELAY_250_MS,
 	TMP119_DELAY_500_MS,

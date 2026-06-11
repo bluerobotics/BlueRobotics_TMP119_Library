@@ -29,14 +29,14 @@ void read();
 float temperature();
 
 /** Sets the conversion averaging mode (TMP119_AVERAGE_1X, _8X, _32X, _64X).
- *  More averaging reduces noise but lengthens the conversion cycle.
- *  Returns false if the I2C write fails.
+ *  More averaging reduces noise but takes longer per result (1X=15.5ms,
+ *  8X=125ms, 32X=500ms, 64X=1s). Returns false if the I2C write fails.
  */
 bool setAveraging(tmp119_average_count_t avg);
 
 /** Sets the minimum standby delay between conversions in continuous-conversion
- *  mode (TMP119_DELAY_0_MS, _125_MS, _250_MS, _500_MS, _1000_MS, _4000_MS,
- *  _8000_MS, _16000_MS). Returns false if the I2C write fails.
+ *  mode (TMP119_DELAY_NONE, TMP119_DELAY_125_MS, _250_MS, _500_MS, _1000_MS,
+ *  _4000_MS, _8000_MS, _16000_MS). Returns false if the I2C write fails.
  */
 bool setReadDelay(tmp119_delay_t delay);
 
@@ -50,9 +50,13 @@ bool setConfig(uint16_t config);
 
 The TMP119 runs in continuous-conversion mode, so `read()` always returns the
 latest result. `init()` configures the sensor for the fastest update rate (no
-averaging, shortest standby delay, ~15.5 ms cycle). To trade speed for lower
-noise, call `setAveraging()` and `setReadDelay()` after `init()`; per the
-datasheet (Table 8-6) the actual cycle time depends on both settings.
+averaging, no added standby delay, ~15.5 ms cycle). To trade speed for lower
+noise, call `setAveraging()` and `setReadDelay()` after `init()`.
+
+`setReadDelay()` sets only the *minimum* standby delay. The actual time between
+readings is the greater of the averaging time and that standby delay (datasheet
+Table 8-6). For example, `TMP119_AVERAGE_64X` always yields at least a ~1 s
+cycle because the averaging alone takes 1 s, regardless of the delay setting.
 
 ``` cpp
 TMP119 sensor;
